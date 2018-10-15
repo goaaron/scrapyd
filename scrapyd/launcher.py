@@ -78,6 +78,7 @@ class ScrapyProcessProtocol(protocol.ProcessProtocol):
         self.logfile = env.get('SCRAPY_LOG_FILE')
         self.itemsfile = env.get('SCRAPY_FEED_URI')
         self.deferred = defer.Deferred()
+        self.errored_out = False
 
     def outReceived(self, data):
         log.msg(data.rstrip(), system="Launcher,%d/stdout" % self.pid)
@@ -94,6 +95,7 @@ class ScrapyProcessProtocol(protocol.ProcessProtocol):
             self.log("Process finished: ")
         else:
             self.log("Process died: exitstatus=%r " % status.value.exitCode)
+            self.errored_out = True #exception caught 
         self.deferred.callback(self)
 
     def log(self, action):
