@@ -181,6 +181,9 @@ class Jobs(resource.Resource):
             + '<tr><th colspan="%d">Finished</th></tr>' % len(self.header_cols)
             + self.prep_tab_finished() +
             '</tbody>'
+            + '<tr><th colspan="%d">Failed</th></tr>' % len(self.header_cols)
+            + self.prep_tab_failed() +
+            '</tbody>'
             '</table>'
         )
 
@@ -220,6 +223,20 @@ class Jobs(resource.Resource):
                 Items='<a href="/items/%s/%s/%s.jl">Items</a>' % (p.project, p.spider, p.job),
             ))
             for p in self.root.launcher.finished
+        )
+    
+    def prep_tab_failed(self):
+        return '\n'.join(
+            self.prep_row(dict(
+                Project=p.project, Spider=p.spider,
+                Job=p.job,
+                Start=microsec_trunc(p.start_time),
+                Runtime=microsec_trunc(p.end_time - p.start_time),
+                Finish=microsec_trunc(p.end_time),
+                Log='<a href="/logs/%s/%s/%s.log">Log</a>' % (p.project, p.spider, p.job),
+                Items='<a href="/items/%s/%s/%s.jl">Items</a>' % (p.project, p.spider, p.job),
+            ))
+            for p in self.root.launcher.failed
         )
 
     def render(self, txrequest):
