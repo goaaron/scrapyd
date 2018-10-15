@@ -222,7 +222,7 @@ class Jobs(resource.Resource):
                 Log='<a href="/logs/%s/%s/%s.log">Log</a>' % (p.project, p.spider, p.job),
                 Items='<a href="/items/%s/%s/%s.jl">Items</a>' % (p.project, p.spider, p.job),
             ))
-            for p in self.root.launcher.finished
+            for p in self.root.launcher.finished if p.errored_out == False
         )
     
     def prep_tab_failed(self):
