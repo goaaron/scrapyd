@@ -139,10 +139,14 @@ class ListJobs(WsResource):
                 "start_time": str(s.start_time),
                 "end_time": str(s.end_time)
             } for s in self.root.launcher.finished
-            if project is None or s.project == project
+            if project is None or s.project == project and s.errored_out == False
         ]
+        failed = [{"id": s.job, "spider": s.spider,
+            "start_time": s.start_time.isoformat(' '),
+            "end_time": s.end_time.isoformat(' ')} for s in self.root.launcher.finished
+            if s.project == project and s.errored_out == True]
         return {"node_name": self.root.nodename, "status": "ok",
-                "pending": pending, "running": running, "finished": finished}
+                "pending": pending, "running": running, "finished": finished, "failed": failed}
 
 class DeleteProject(WsResource):
 
