@@ -90,19 +90,19 @@ class ScrapyProcessProtocol(protocol.ProcessProtocol):
         self.pid = self.transport.pid
         self.log("Process started: ")
         
-    def inConnectionLost(self):
-        self.errored_out = True
-
-    def outConnectionLost(self):
-        self.errored_out = True
-
-    def errConnectionLost(self):
-        self.errored_out = True
+    # def inConnectionLost(self):
+    #     self.errored_out = True
+    #
+    # def outConnectionLost(self):
+    #     self.errored_out = True
+    #
+    # def errConnectionLost(self):
+    #     self.errored_out = True
 
     def processEnded(self, status):
         if isinstance(status.value, error.ProcessDone):
             self.log("Process finished: ")
-        else:
+        if not isinstance(status.value, error.ProcessDone):
             self.log("Process died: exitstatus=%r " % status.value.exitCode)
             self.errored_out = True #exception caught 
         self.deferred.callback(self)
